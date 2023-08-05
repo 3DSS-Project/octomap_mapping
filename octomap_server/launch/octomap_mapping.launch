@@ -17,7 +17,6 @@
 		<param name="sensor_model/max_range" value="100.0" />
 		
 		<!-- data source to integrate (PointCloud2) -->
-		<remap from="cloud_in" to="/sc_lio_sam/mapping/map_local" />
-	
+		<remap from="cloud_in" to="/semantic_points" />
 	</node>
 </launch>
