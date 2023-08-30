@@ -49,11 +49,11 @@ OctomapServer::OctomapServer(const ros::NodeHandle private_nh_, const ros::NodeH
   m_maxRange(-1.0),
   m_minRange(-1.0),
   m_worldFrameId("/map"), m_baseFrameId("base_footprint"),
-  m_useHeightMap(true),
-  m_useColoredMap(false),
+  m_useHeightMap(false),
+  m_useColoredMap(true),
   m_colorFactor(0.8),
   m_latchedTopics(true),
-  m_publishFreeSpace(false),
+  m_publishFreeSpace(true),
   m_res(0.05),
   m_treeDepth(0),
   m_maxTreeDepth(0),
@@ -141,8 +141,8 @@ OctomapServer::OctomapServer(const ros::NodeHandle private_nh_, const ros::NodeH
   m_gridmap.info.resolution = m_res;
 
   double r, g, b, a;
-  m_nh_private.param("color/r", r, 0.0);
-  m_nh_private.param("color/g", g, 0.0);
+  m_nh_private.param("color/r", r, 1.0);
+  m_nh_private.param("color/g", g, 1.0);
   m_nh_private.param("color/b", b, 1.0);
   m_nh_private.param("color/a", a, 1.0);
   m_color.r = r;
@@ -583,7 +583,7 @@ void OctomapServer::publishAll(const ros::Time& rostime){
             double h = (1.0 - std::min(std::max((cubeCenter.z-minZ)/ (maxZ - minZ), 0.0), 1.0)) *m_colorFactor;
             occupiedNodesVis.markers[idx].colors.push_back(heightMapColor(h));
           }
-
+          
 #ifdef COLOR_OCTOMAP_SERVER
           if (m_useColoredMap) {
             std_msgs::ColorRGBA _color; _color.r = (r / 255.); _color.g = (g / 255.); _color.b = (b / 255.); _color.a = 1.0; // TODO/EVALUATE: potentially use occupancy as measure for alpha channel?
@@ -1038,8 +1038,7 @@ void OctomapServer::handlePreNodeTraversal(const ros::Time& rostime){
 
        // reset proj. 2D map in bounding box:
        for (unsigned int j = mapUpdateBBXMinY; j <= mapUpdateBBXMaxY; ++j){
-          std::fill_n(m_gridmap.data.begin() + m_gridmap.info.width*j+mapUpdateBBXMinX,
-                      numCols, -1);
+          std::fill_n(m_gridmap.data.begin() + m_gridmap.info.width*j+mapUpdateBBXMinX, numCols, -1);
        }
 
     }
