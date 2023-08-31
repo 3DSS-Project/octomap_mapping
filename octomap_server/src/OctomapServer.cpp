@@ -141,9 +141,9 @@ OctomapServer::OctomapServer(const ros::NodeHandle private_nh_, const ros::NodeH
   m_gridmap.info.resolution = m_res;
 
   double r, g, b, a;
-  m_nh_private.param("color/r", r, 1.0);
-  m_nh_private.param("color/g", g, 1.0);
-  m_nh_private.param("color/b", b, 1.0);
+  m_nh_private.param("color/r", r, 0.0);
+  m_nh_private.param("color/g", g, 0.0);
+  m_nh_private.param("color/b", b, 0.0);
   m_nh_private.param("color/a", a, 1.0);
   m_color.r = r;
   m_color.g = g;
@@ -575,6 +575,7 @@ void OctomapServer::publishAll(const ros::Time& rostime){
           cubeCenter.z = z;
 
           occupiedNodesVis.markers[idx].points.push_back(cubeCenter);
+          
           if (m_useHeightMap){
             double minX, minY, minZ, maxX, maxY, maxZ;
             m_octree->getMetricMin(minX, minY, minZ);
@@ -588,6 +589,7 @@ void OctomapServer::publishAll(const ros::Time& rostime){
           if (m_useColoredMap) {
             std_msgs::ColorRGBA _color; _color.r = (r / 255.); _color.g = (g / 255.); _color.b = (b / 255.); _color.a = 1.0; // TODO/EVALUATE: potentially use occupancy as measure for alpha channel?
             occupiedNodesVis.markers[idx].colors.push_back(_color);
+            // 
           }
 #endif
         }
